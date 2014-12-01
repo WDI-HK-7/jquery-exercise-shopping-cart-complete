@@ -39,8 +39,9 @@ $(document).ready(function(){
       alert('Item name cannot be empty');
     }else{
       itemUnitPrice = Number(itemUnitPrice).toFixed(2)
-      var newItem = '<div class="item row"><div class="item-name col-xs-4">'+itemName+'</div><div class="item-price col-xs-3">$'+itemUnitPrice+'</div><div class="item-qty col-xs-3"><label>QTY</label><input class="quantity" value="0"><button class="cancel">Cancel</button></div><div class="item-subtotal col-xs-2">$0.00</div></div>';
-      $('#items-list').prepend(newItem);
+      var newItem = '<div class="item row" style="display:none;"><div class="item-name col-xs-4">'+itemName+'</div><div class="item-price col-xs-3">$'+itemUnitPrice+'</div><div class="item-qty col-xs-3"><label>QTY</label><input class="quantity" value="0"><button class="cancel">Cancel</button></div><div class="item-subtotal col-xs-2">$0.00</div></div>';
+      // $('#items-list').prepend(newItem);
+      $(newItem).prependTo($('#items-list')).slideDown('slow');
     }
   };
 
@@ -61,8 +62,10 @@ $(document).ready(function(){
   // delegate vs. bind
   // $('.cancel').bind('click',function(){}
   $(document).delegate('.cancel', 'click',function(){
-    $(this).parent().parent().html('');
-    returnTotalPrice();
+    $(this).parent().parent().fadeOut('slow', function(){
+      $(this).html('');
+      returnTotalPrice();
+    });
   });
 });
 
