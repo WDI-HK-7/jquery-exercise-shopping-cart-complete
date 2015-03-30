@@ -1,28 +1,29 @@
+// cmd + R
+
 $(document).ready(function(){
   var returnSubtotalPrice = function(price, quantity, i){
+    // Grab all the subtotal price
     var itemSubtotalPrices = $('.item-subtotal');
-    $(itemSubtotalPrices[i]).text('$'+(price*quantity).toFixed(2));
+
+    // Identify the current subtotal using i as the index
+    var currentSubtotal = $(itemSubtotalPrices[i])
+
+    // Modify the current subtotal
+    currentSubtotal.text('$'+(price*quantity).toFixed(2));
   };
 
   var returnTotalPrice = function(){
-    var itemPrices = $('.item-price');
-    var itemQuantities = $('.quantity');
-    var itemLength = itemPrices.length;
-    var totalPrice = 0;
+    var itemPrices = $('.item-price'); // Select all the prices
+    var itemQuantities = $('.quantity'); // Select all the quantities
+    var itemLength = itemPrices.length; // Both arrays will have the same length
+    var totalPrice = 0; // Accumulator
 
-    for (var i=0; i < itemLength; i++){
-      var price = $(itemPrices[i]).text().replace('$','');
-      if ($.isNumeric(itemQuantities[i].value)) {
-        var quantity = itemQuantities[i].value;
-        $(itemQuantities[i]).css('color', 'black');
-      } else {
-        var quantity = 0;
-        $('#total-price').after("")
-        $(itemQuantities[i]).css('color', 'red');
-      }
-
+    for (var i = 0; i < itemLength; i++){
+      var price = $(itemPrices[i]).text().replace('$',''); // "10.00"
+      var quantity = itemQuantities[i].value;
+      totalPrice = totalPrice + price * quantity;
+      
       returnSubtotalPrice(price, quantity, i);
-      totalPrice += price*quantity;
     }
 
     $('#total-price').text('$'+totalPrice.toFixed(2));
@@ -35,13 +36,13 @@ $(document).ready(function(){
 
     if ($.isNumeric(itemUnitPrice) == false){
       alert('Unit price must be a number');
-    }else if (itemName == ''){
+    } else if (itemName == ''){
       alert('Item name cannot be empty');
-    }else{
+    } else {
       itemUnitPrice = Number(itemUnitPrice).toFixed(2)
-      var newItem = '<div class="item row" style="display:none;"><div class="item-name col-xs-4">'+itemName+'</div><div class="item-price col-xs-3">$'+itemUnitPrice+'</div><div class="item-qty col-xs-3"><label>QTY</label><input class="quantity" value="0"><button class="cancel">Cancel</button></div><div class="item-subtotal col-xs-2">$0.00</div></div>';
-      // $('#items-list').prepend(newItem);
-      $(newItem).prependTo($('#items-list')).slideDown('slow');
+      var newItem = '<div class="item row"> <div class="item-name col-xs-4">'+ itemName + '</div> <div class="item-price col-xs-3">'+ itemUnitPrice + '</div> <div class="item-qty col-xs-3"> <label>QTY</label> <input class="quantity" value="0"> <button class="cancel">Cancel</button> </div> <div class="item-subtotal col-xs-2"> $0.00 </div> </div>';
+      $('#items-list').prepend(newItem);
+      // $(newItem).prependTo($('#items-list')).slideDown('slow');
     }
   };
 
@@ -49,9 +50,7 @@ $(document).ready(function(){
     returnTotalPrice();
   });
 
-  // blur vs. delegate focusout
-  // $('.quantity').blur(function(){
-  $(document).delegate('.quantity', 'focusout', function(){
+  $(document).on('keyup', '.quantity', function(){
     returnTotalPrice();
   });
 
@@ -59,18 +58,12 @@ $(document).ready(function(){
     createItem();
   });
 
-  // delegate vs. bind
-  // $('.cancel').bind('click',function(){}
-  $(document).delegate('.cancel', 'click',function(){
+  $(document).on('click', '.cancel',function(){
+    // fadeOut = hiding = display: none;
     $(this).parent().parent().fadeOut('slow', function(){
-      $(this).html('');
-      returnTotalPrice();
+      $(this).remove(); // This is removing the HTML
+      // $(this).html(''); // This is removing the HTML
+      returnTotalPrice(); // Recalculate the total price
     });
   });
 });
-
-// for (var name in myObject) {
-//   if (myObject.hasOwnProperty(name)) {
-//     alert(name);
-//   }
-// }
